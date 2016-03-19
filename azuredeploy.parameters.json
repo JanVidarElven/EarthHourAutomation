@@ -1,0 +1,27 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "automationsqlserverAdminLogin": {
+            "value": "az-sql-sa"
+        },
+        "automationrepositoryDBName": {
+            "value": "ElvenAutomationRepository"
+        },
+        "automationsqlserverClientIPStart": {
+            "value": "77.19.32.110"
+        },
+        "automationsqlserverClientIPStop": {
+            "value": "77.19.32.110"
+        },
+        "automationsqlserverClientIPLocation": {
+            "value": "Blefjell"
+        },
+        "automationrepositoryImportStorageKeyType": {
+            "value": "Primary"
+        },
+        "automationrepositoryImportStorageUri": {
+            "value": "https://skillsqlexportstorage.blob.core.windows.net/sqlexportblob/SkillAutomationRepository-2016-3-19-19-23.bacpac"
+        }
+    }
+}

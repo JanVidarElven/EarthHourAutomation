@@ -1,0 +1,160 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "automationsqlserverAdminLogin": {
+      "type": "string",
+      "minLength": 1
+    },
+    "automationsqlserverAdminLoginPassword": {
+      "type": "securestring"
+    },
+    "automationsqlserverClientIPStart": {
+      "type": "string",
+      "minLength": 1
+    },
+    "automationsqlserverClientIPStop": {
+      "type": "string",
+      "minLength": 1
+    },
+    "automationsqlserverClientIPLocation": {
+      "type": "string",
+      "minLength": 1
+    },
+    "automationrepositoryDBName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "automationrepositoryDBCollation": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+    },
+    "automationrepositoryDBEdition": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    },
+    "automationrepositoryDBRequestedServiceObjectiveName": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "S0",
+        "S1",
+        "S2",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "metadata": {
+        "description": "Describes the performance level for Edition"
+      }
+    },
+      "automationrepositoryImportStorageKeyType": {
+          "type": "string",
+          "minLength": 1
+      },
+      "automationrepositoryImportStorageKey": {
+          "type": "securestring"
+      },
+      "automationrepositoryImportStorageUri": {
+          "type": "string",
+          "minLength": 1
+      }
+  },
+  "variables": {
+    "automationsqlserverName": "[concat('automationsqlserver', uniqueString(resourceGroup().id))]",
+    "automationsqlserverClientIPName": "[concat('ClientIPAddress_', parameters('automationsqlserverClientIPLocation'))]"
+  },
+    "resources": [
+        {
+            "name": "[variables('automationsqlserverName')]",
+            "type": "Microsoft.Sql/servers",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2014-04-01-preview",
+            "dependsOn": [ ],
+            "tags": {
+                "displayName": "automationsqlserver"
+            },
+            "properties": {
+                "administratorLogin": "[parameters('automationsqlserverAdminLogin')]",
+                "administratorLoginPassword": "[parameters('automationsqlserverAdminLoginPassword')]"
+            },
+          "resources": [
+            {
+              "name": "AllowAllWindowsAzureIps",
+              "type": "firewallrules",
+              "location": "[resourceGroup().location]",
+              "apiVersion": "2014-04-01-preview",
+              "dependsOn": [
+                "[concat('Microsoft.Sql/servers/', variables('automationsqlserverName'))]"
+              ],
+              "properties": {
+                "startIpAddress": "0.0.0.0",
+                "endIpAddress": "0.0.0.0"
+              }
+            },
+            {
+              "name": "[variables('automationsqlserverClientIPName')]",
+              "type": "firewallrules",
+              "location": "[resourceGroup().location]",
+              "apiVersion": "2014-04-01-preview",
+              "dependsOn": [
+                "[concat('Microsoft.Sql/servers/', variables('automationsqlserverName'))]"
+              ],
+              "properties": {
+                "startIpAddress": "[parameters('automationsqlserverClientIPStart')]",
+                "endIpAddress": "[parameters('automationsqlserverClientIPStop')]"
+              }
+            },
+            {
+              "name": "[parameters('automationrepositoryDBName')]",
+              "type": "databases",
+              "location": "[resourceGroup().location]",
+              "apiVersion": "2014-04-01-preview",
+              "dependsOn": [
+                "[variables('automationsqlserverName')]"
+              ],
+              "tags": {
+                "displayName": "automationrepositoryDB"
+              },
+              "properties": {
+                "collation": "[parameters('automationrepositoryDBCollation')]",
+                "edition": "[parameters('automationrepositoryDBEdition')]",
+                "maxSizeBytes": "1073741824",
+                "requestedServiceObjectiveName": "[parameters('automationrepositoryDBRequestedServiceObjectiveName')]"
+              },
+              "resources": [
+                  {
+                      "name": "Import",
+                      "type": "extensions",
+                      "apiVersion": "2014-04-01-preview",
+                      "dependsOn": [
+                          "[parameters('automationrepositoryDBName')]"
+                      ],
+                      "tags": {
+                          "displayName": "automationrepositoryImport"
+                      },
+                    "properties": {
+                      "storageKeyType": "[parameters('automationrepositoryImportStorageKeyType')]",
+                      "storageKey": "[parameters('automationrepositoryImportStorageKey')]",
+                      "storageUri": "[parameters('automationrepositoryImportStorageUri')]",
+                      "administratorLogin": "[parameters('automationsqlserverAdminLogin')]",
+                      "administratorLoginPassword": "[parameters('automationsqlserverAdminLoginPassword')]",
+                      "operationMode": "Import"
+                    }
+                  }
+
+              ]
+            }
+          ]
+        }
+    ],
+    "outputs": {
+    }
+}
