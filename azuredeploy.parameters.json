@@ -3,25 +3,25 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "automationsqlserverAdminLogin": {
-            "value": "az-sql-sa"
+            "value": "MySqlAdmin"
         },
         "automationrepositoryDBName": {
-            "value": "ElvenAutomationRepository"
+            "value": "MyAutomationRepository"
         },
         "automationsqlserverClientIPStart": {
-            "value": "77.19.32.110"
+            "value": "x.y.z.w"
         },
         "automationsqlserverClientIPStop": {
-            "value": "77.19.32.110"
+            "value": "x.y.z.w"
         },
         "automationsqlserverClientIPLocation": {
-            "value": "Blefjell"
+            "value": "MyClientLocation"
         },
         "automationrepositoryImportStorageKeyType": {
             "value": "Primary"
         },
         "automationrepositoryImportStorageUri": {
-            "value": "https://skillsqlexportstorage.blob.core.windows.net/sqlexportblob/SkillAutomationRepository-2016-3-19-19-23.bacpac"
+            "value": "https://mystorageaccount.blob.core.windows.net/sqlexportblob/AutomationRepository.bacpac"
         }
     }
 }
